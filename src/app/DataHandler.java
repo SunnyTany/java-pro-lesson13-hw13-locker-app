@@ -5,25 +5,25 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class DataHandler {
 
+    // Lock to prevent concurrent modification of the shared array
     private final Lock lock = new ReentrantLock();
 
     public void handleData(int[] sharedArray) {
-        String threadName = Thread.currentThread().getName();
-
-        System.out.println("[" + threadName + "] wants to take a seat");
+        // Acquire the lock before accessing the shared resource
         lock.lock();
 
         try {
-            System.out.println("[" + threadName + "] taking a lock");
-
+            // Process and modify each element of the array
             for (int i = 0; i < sharedArray.length; i++) {
-                sharedArray[i] = sharedArray[i] * 3;
-            }
+                int initialValue = sharedArray[i];
+                sharedArray[i] = initialValue * 3;
 
-            System.out.println("[" + threadName + "] want to give you a lock");
+                System.out.println("Initial value is " + initialValue);
+                System.out.println("New value is " + sharedArray[i]);
+            }
         } finally {
+            // Always release the lock in a finally block
             lock.unlock();
-            System.out.println("[" + threadName + "] gave the lock");
         }
     }
 }
